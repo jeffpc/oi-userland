@@ -68,7 +68,7 @@ publish:	SHELLOPTS=pipefail
 
 SHELL=	/bin/bash
 
-CONSOLIDATION =	userland
+CONSOLIDATION =	omnios.31bits.net
 PUBLISHER ?=	$(CONSOLIDATION)
 PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 
@@ -331,7 +331,7 @@ export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
 export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 
-GCC_ROOT =	/usr/gcc/4.8
+GCC_ROOT =	/opt/gcc-4.8.1
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
@@ -428,7 +428,7 @@ PERL_VERSIONS = 5.16
 
 PERL.5.10.0 =     /usr/perl5/5.10.0/bin/perl
 PERL.5.12 =     /usr/perl5/5.12/bin/perl
-PERL.5.16 =	/usr/perl5/5.16/bin/perl
+PERL.5.16 =	/usr/bin/perl
 
 PERL =          $(PERL.$(PERL_VERSION))
 
