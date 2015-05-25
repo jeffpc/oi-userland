@@ -421,14 +421,14 @@ JAVA_HOME = $(JAVA7_HOME)
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 #PERL_VERSION =  5.10.0
-PERL_VERSION =  5.16
+PERL_VERSION =  5.16.1
 
 #PERL_VERSIONS = 5.10.0 5.12 5.16
-PERL_VERSIONS = 5.16
+PERL_VERSIONS = 5.16.1
 
 PERL.5.10.0 =     /usr/perl5/5.10.0/bin/perl
 PERL.5.12 =     /usr/perl5/5.12/bin/perl
-PERL.5.16 =	/usr/bin/perl
+PERL.5.16.1 =	/usr/bin/perl
 
 PERL =          $(PERL.$(PERL_VERSION))
 
