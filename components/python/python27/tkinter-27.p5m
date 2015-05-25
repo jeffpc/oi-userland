@@ -36,8 +36,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license python27.license license=PSFv2
 
-file path=usr/lib/python2.7/lib-dynload/64/_tkinter.so
-file path=usr/lib/python2.7/lib-dynload/_tkinter.so
 file path=usr/lib/python2.7/lib-tk/Canvas.py
 file path=usr/lib/python2.7/lib-tk/Dialog.py
 file path=usr/lib/python2.7/lib-tk/FileDialog.py
