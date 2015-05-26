@@ -22,20 +22,21 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform link path=.* -> default pkg.linted.userland.action002.0 true>
+<transform link path=.* -> default mediator gcc>
 
 dir  path=usr
 dir  path=usr/bin
 
 # 4.8
-link path=usr/bin/c++      target=../../opt/gcc-4.8.1/bin/c++      mediator=gcc mediator-version=4.8
-link path=usr/bin/g++      target=../../opt/gcc-4.8.1/bin/g++      mediator=gcc mediator-version=4.8
-link path=usr/bin/gcc      target=../../opt/gcc-4.8.1/bin/gcc      mediator=gcc mediator-version=4.8
-link path=usr/bin/gcov     target=../../opt/gcc-4.8.1/bin/gcov     mediator=gcc mediator-version=4.8
-link path=usr/bin/cpp      target=../../opt/gcc-4.8.1/bin/cpp      mediator=gcc mediator-version=4.8
-link path=usr/bin/gfortran target=../../opt/gcc-4.8.1/bin/gfortran mediator=gcc mediator-version=4.8
+link path=usr/bin/c++      target=../../opt/gcc-4.8.1/bin/c++      mediator-version=4.8
+link path=usr/bin/g++      target=../../opt/gcc-4.8.1/bin/g++      mediator-version=4.8
+link path=usr/bin/gcc      target=../../opt/gcc-4.8.1/bin/gcc      mediator-version=4.8
+link path=usr/bin/gcov     target=../../opt/gcc-4.8.1/bin/gcov     mediator-version=4.8
+link path=usr/bin/cpp      target=../../opt/gcc-4.8.1/bin/cpp      mediator-version=4.8
+link path=usr/bin/gfortran target=../../opt/gcc-4.8.1/bin/gfortran mediator-version=4.8
 
-link path=usr/share/man/man1/cpp.1      target=/opt/gcc-4.8.1/share/man/man1/cpp.1      mediator=gcc mediator-version=4.8
-link path=usr/share/man/man1/g++.1      target=/opt/gcc-4.8.1/share/man/man1/g++.1      mediator=gcc mediator-version=4.8
-link path=usr/share/man/man1/gcc.1      target=/opt/gcc-4.8.1/share/man/man1/gcc.1      mediator=gcc mediator-version=4.8
-link path=usr/share/man/man1/gcov.1     target=/opt/gcc-4.8.1/share/man/man1/gcov.1     mediator=gcc mediator-version=4.8
-link path=usr/share/man/man1/gfortran.1 target=/opt/gcc-4.8.1/share/man/man1/gfortran.1 mediator=gcc mediator-version=4.8
+link path=usr/share/man/man1/cpp.1      target=/opt/gcc-4.8.1/share/man/man1/cpp.1      mediator-version=4.8
+link path=usr/share/man/man1/g++.1      target=/opt/gcc-4.8.1/share/man/man1/g++.1      mediator-version=4.8
+link path=usr/share/man/man1/gcc.1      target=/opt/gcc-4.8.1/share/man/man1/gcc.1      mediator-version=4.8
+link path=usr/share/man/man1/gcov.1     target=/opt/gcc-4.8.1/share/man/man1/gcov.1     mediator-version=4.8
+link path=usr/share/man/man1/gfortran.1 target=/opt/gcc-4.8.1/share/man/man1/gfortran.1 mediator-version=4.8
