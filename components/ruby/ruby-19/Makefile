@@ -130,6 +130,7 @@ CONFIGURE_OPTIONS +=	--enable-rpath
 CONFIGURE_OPTIONS +=	--disable-install-capi
 CONFIGURE_OPTIONS +=	--disable-option-checking
 CONFIGURE_OPTIONS +=	--with-openssl
+CONFIGURE_OPTIONS +=	--without-X11
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # fiddle.so (ext/fiddle) links to libffi, which does not define
