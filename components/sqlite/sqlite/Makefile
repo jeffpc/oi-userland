@@ -24,12 +24,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME			= sqlite
-COMPONENT_VERSION		= 3.8.8.3
-TARBALL_VERSION			= 3080803
+COMPONENT_VERSION		= 3.8.11.1
+TARBALL_VERSION			= 3081101
 COMPONENT_SRC			= sqlite-autoconf-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:74576964cd9db44c13bf95d6a7c36b06cfdfb2fe4e3e26c9ce1ae0b2e328b411
+	sha256:fb99b0ac038c4a7e48b44b61836cb41d4eeba36b4d0ee757beeab59031a1d3b6
 COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2015/$(COMPONENT_ARCHIVE)
 
 include ../../../make-rules/prep.mk
@@ -41,6 +41,8 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         aclocal -I . &&\
                                         automake -c -f -a &&\
                                         autoconf )
+
+COMPONENT_BUILD_ARGS=
 
 COMPONENT_PRE_CONFIGURE_ACTION   += $(CLONEY) $(SOURCE_DIR) $(@D);
 COMPONENT_PRE_CONFIGURE_ACTION   += $(CP) $(COMPONENT_DIR)/mapfile $(@D)
@@ -55,6 +57,7 @@ CFLAGS			+= -DHAVE_FDATASYNC
 CFLAGS			+= -DHAVE_STATVFS 
 CFLAGS			+= -DSQLITE_ENABLE_UNLOCK_NOTIFY
 CFLAGS			+= -DSQLITE_ENABLE_STAT2
+CFLAGS			+= -DSQLITE_ENABLE_STMT_SCANSTATUS
 
 #Fixes firefox crash with new sqlite, don't remove until proper fix
 gcc_OPT                 =  -O2

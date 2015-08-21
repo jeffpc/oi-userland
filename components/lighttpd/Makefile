@@ -26,12 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
-COMPONENT_VERSION=	1.4.32
+COMPONENT_VERSION=	1.4.36
 COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0765e07dac432393dea3950639d5ba646ded95a9408ad002e54b3353ab6b9645
+    sha256:8afc12cd40412cd94679f08725c68e4f5a3d91dfff7abc12d217c4f489b1819b
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lighttpd
 
@@ -42,6 +42,9 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 PATCH_LEVEL=0
+
+CFLAGS += -I/usr/include/openldap
+LDFLAGS += -lldap_r-2.4
 
 # libtool linking will fail unless we re-create configure.
 COMPONENT_PREP_ACTION = ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh )
@@ -58,6 +61,7 @@ CONFIGURE_OPTIONS +=	--without-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
 CONFIGURE_OPTIONS +=	--with-mysql=/usr/mariadb/5.5/bin/mysql_config
+CONFIGURE_OPTIONS +=	--with-ldap
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
