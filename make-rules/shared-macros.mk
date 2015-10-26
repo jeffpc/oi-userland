@@ -70,7 +70,7 @@ publish:	SHELLOPTS=pipefail
 
 SHELL=	/bin/bash
 
-CONSOLIDATION =	userland
+CONSOLIDATION =	jeffix.31bits.net
 PUBLISHER ?=	$(CONSOLIDATION)
 PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 
