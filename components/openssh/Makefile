@@ -58,6 +58,7 @@ CFLAGS += -DPAM_BUGFIX
 CFLAGS += -DOPTION_DEFAULT_VALUE
 CFLAGS += -DWITHOUT_ED25519
 CFLAGS += -DPER_SESSION_XAUTHFILE
+CFLAGS += -I/usr/include/kerberosv5/
 
 # We need to disable lazyloading of dynamic dependent libraries. During the
 # pre-authentication phase, sshd will chroot to /var/empty which doesn't
