@@ -460,7 +460,7 @@ class UserlandManifestChecker(base.ManifestChecker):
 					ret = interface.info([pkg_name],True,info_needed)
 					if ret[pkg.client.api.ImageInterface.INFO_FOUND]:
 					        for i in ret[pkg.client.api.ImageInterface.INFO_FOUND]:
-							if i.publisher not in ("openindiana.org","userland","on-nightly", "omnios"):
+							if i.publisher not in ("omnios.31bits.net", "omnios"):
 								engine.error(_("package %(pkg)s depends on %(name)s, which comes from forbidden publisher %(publisher)s") %
 									{"pkg":manifest.fmri,"name":pkg_name,"publisher":i.publisher}, msgid="%s%s.1" % (self.name, pkglint_id))
 
