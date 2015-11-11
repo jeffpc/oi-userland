@@ -19,9 +19,6 @@ COMPONENT_NAME=		gcc-links
 COMPONENT_VERSION=	0.1
 COMPONENT_PROJECT_URL=		
 COMPONENT_FMRI=		developer/gcc-links
-COMPONENT_LICENSE=	BSD
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
-COMPONENT_SUMMARY=	provide /usr/bin/gcc mediated symlinks for OmniOS gcc packages
 COMPONENT_CLASSIFICATION="Development/C"
 
 include ../../make-rules/prep.mk
