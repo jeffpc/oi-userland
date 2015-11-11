@@ -14,10 +14,11 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.5.28
+COMPONENT_VERSION=	5.5.30
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6084f25a39ab2f79ade46bf0258a1cd6c9bbb09a106b40dd996dbdf8cd3b08f2
+COMPONENT_ARCHIVE_HASH=	sha256:8ad57f4317391354e66c83d26752f67515b2e923277eb97b2b420dfeff3c1007
 COMPONENT_ARCHIVE_URL=	http://ru2.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
 include ../../make-rules/prep.mk
@@ -36,6 +37,7 @@ PHP_SYSCONFDIR=/etc/php/5.5
 PHP_DATADIR=/var/php/5.5
 
 CFLAGS = $(CC_BITS) -D_POSIX_PTHREAD_SEMANTICS
+CPPFLAGS += -I/usr/include/openldap
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && autoconf )
 # Configure Options
@@ -179,6 +181,7 @@ CONFIGURE_ENV.32 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions
 CONFIGURE_ENV.64 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions/$(MACH64)
 CONFIGURE_ENV.32 +=     ICU_CONFIG=/usr/bin/icu-config
 CONFIGURE_ENV.64 +=     ICU_CONFIG=/usr/bin/amd64/icu-config
+CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 
 # Standard build
 #$(BUILD_DIR_32)/.configured:	CONFIGURE_VARIANT_OPTIONS= \

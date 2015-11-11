@@ -17,35 +17,21 @@
 
 /^areca$/d
 /^beanshell$/d
-/^clisp$/d
 /^elinks$/d
 /^enscript$/d
 /^gcc45$/d
 /^ksh93$/d
-/^meld$/d
 /^memcached-java$/d
 /^open-fabrics$/d
 /^openexr$/d
-/^openscap$/d
 /^openssl\/openssl-1.0.1-fips-140$/d
 /^pam_pkcs11$/d
 /^php-5_2$/d
 /^php-5_3$/d
 /^php-common$/d
-/^popt$/d
 /^quagga$/d
 /^tcltls$/d
 /^timezone$/d
-/^visual-panels\/apache$/d
-/^visual-panels\/core$/d
-/^visual-panels\/coreadm$/d
-/^visual-panels\/examples$/d
-/^visual-panels\/firewall$/d
-/^visual-panels\/smf$/d
-/^visual-panels\/sysmon$/d
-/^visual-panels\/time$/d
-/^visual-panels\/usermgr$/d
-/^visual-panels\/zconsole$/d
 /^gcc44/d
 
 # Below is a list of components, which are known to build, but are 
@@ -53,7 +39,5 @@
 # # <reason why is package disabled>
 # /^package$/d
 # 
-# delivered in JDS, needs enabling here once it is dropped from JDS
-/^popt$/d
 # Should be delivered by illumos-gate, don't enable
 /^libtecla$/d

@@ -17,7 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
 COMPONENT_VERSION= 	24.8.1esr
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 IPS_COMPONENT_VERSION=	24.8.1
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		mozilla-esr24
@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:53db5f6d52e4669bf2650b1dd9d480b31eb1cc42c107ed741a65fb5bcacc8932
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
+  https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
 
 LANG_LIST=	ar be bg ca cs da de el es-AR es-CL es-ES et fi fr he hi-IN hr hu id is it ja kk ko lt lv mk nb-NO nl nn-NO pl pt-BR pt-PT ro ru sk sl sq sr sv-SE th tr uk vi zh-CN zh-TW

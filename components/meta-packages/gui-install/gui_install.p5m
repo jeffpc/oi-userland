@@ -166,6 +166,7 @@ depend fmri=driver/network/uath type=require
 depend fmri=driver/network/ural type=require
 depend fmri=driver/network/urtw type=require
 depend fmri=driver/network/usbecm type=require
+depend fmri=driver/network/vioif type=require
 depend fmri=driver/network/vr type=require
 depend fmri=driver/network/wpi type=require
 depend fmri=driver/network/xge type=require
@@ -202,6 +203,7 @@ depend fmri=driver/storage/sdcard type=require
 depend fmri=driver/storage/ses type=require
 depend fmri=driver/storage/si3124 type=require
 depend fmri=driver/storage/smp type=require
+depend fmri=driver/storage/vioblk type=require
 depend fmri=driver/usb type=require
 depend fmri=driver/usb/ugen type=require
 depend fmri=driver/x11/winlock type=require
@@ -220,7 +222,6 @@ depend fmri=gnome/applet/gnome-applets type=require
 depend fmri=gnome/applet/gnome-fun-applets type=require
 depend fmri=gnome/applet/gnome-internet-applets type=require
 depend fmri=gnome/applet/gnome-intranet-applets type=require
-depend fmri=gnome/applet/gnome-mm-applets type=require
 depend fmri=gnome/applet/gnome-utility-applets type=require
 depend fmri=gnome/config/gconf type=require
 depend fmri=gnome/disk-analyzer/baobab type=require
@@ -305,7 +306,7 @@ depend fmri=library/graphics/pixman type=require
 depend fmri=library/idnkit type=require
 depend fmri=library/java/javahelp type=require
 depend fmri=library/java/jss type=require
-depend fmri=library/lcms type=require
+depend fmri=library/lcms2 type=require
 depend fmri=library/libcroco type=require
 depend fmri=library/libdaemon type=require
 depend fmri=library/libffi type=require
@@ -658,8 +659,6 @@ depend fmri=system/management/snmp/net-snmp type=require
 depend fmri=system/management/snmp/net-snmp/documentation type=require
 depend fmri=system/management/snmp/sea/sea-config type=require
 depend fmri=system/management/sysidtool type=require
-depend fmri=system/management/visual-panels type=require
-depend fmri=system/management/visual-panels/panel-firewall type=require
 depend fmri=system/manual/locale/ca type=require
 depend fmri=system/manual/locale/ja type=require
 depend fmri=system/network type=require
@@ -716,6 +715,7 @@ depend fmri=x11/diagnostic/xscope type=require
 depend fmri=x11/documentation/xorg-docs type=require
 depend fmri=x11/font-utilities type=require
 depend fmri=x11/header/x11-protocols type=require
+depend fmri=x11/iceauth type=require
 depend fmri=x11/keyboard/data-xkb type=require
 depend fmri=x11/keyboard/xkb-utilities type=require
 depend fmri=x11/keyboard/xkbcomp type=require
