@@ -35,27 +35,3 @@ index bb2dfa2..d9b6ce1 100644
 -- 
 2.3.2 (Apple Git-55)
 
---- openssh-6.8p1/configure.1	2015-11-10 22:03:39.853179908 +0300
-+++ openssh-6.8p1/configure	2015-11-10 22:06:22.677899948 +0300
-@@ -32069,7 +32069,11 @@
- echo "${ECHO_T}no" >&6; }
- fi
- 
--
-+		# Illumos has GSS but krb5-config doesn't talk about it
-+		# Fall back to regular probing for libs
-+		if uname -rs | grep 'SunOS 5.11' ; then
-+			KRB5CONF=nonexistent
-+		fi
- 		if test -x $KRB5CONF ; then
- 			K5CFLAGS="`$KRB5CONF --cflags`"
- 			K5LIBS="`$KRB5CONF --libs`"
-@@ -32327,7 +32331,7 @@
- 
- 	 { echo "$as_me:$LINENO: result: no" >&5
- echo "${ECHO_T}no" >&6; }
--					 K5LIBS="-lkrb5 -lk5crypto -lcom_err"
-+					 K5LIBS="-lkrb5"
- 
- 
- fi

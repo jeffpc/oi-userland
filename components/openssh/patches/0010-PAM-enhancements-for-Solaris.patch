@@ -1,17 +1,37 @@
+From f31faf48842765bb3a9a5a9c400bf4613d639e94 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:36:19 -0700
+Subject: [PATCH 10/30] PAM enhancements for Solaris
+
 #
 # This patch contains a couple of PAM enhancements:
 #   1) Each SSHv2 userauth method has its own PAM service name so that PAM can
 #      be used to control what userauth methods are allowed.
 #   2) The PAMServiceName and PAMServicePrefix options.
-# 
-# We have contributed back this feature to the OpenSSH upstream community. 
+#
+# We have contributed back this feature to the OpenSSH upstream community.
 # For more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2246
-# In the future, if these enhancements are accepted by the upsteam in a 
+# In the future, if these enhancements are accepted by the upsteam in a
 # later release, we will remove this patch when we upgrade to that release.
 #
-diff -pur old/auth-pam.c new/auth-pam.c
---- old/auth-pam.c	2015-04-28 06:15:57.335765454 -0700
-+++ new/auth-pam.c	2015-04-28 06:15:57.417753483 -0700
+---
+ auth-pam.c     | 119 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ auth.h         |   3 ++
+ auth2.c        |  61 ++++++++++++++++++++++++++++-
+ monitor.c      |  63 ++++++++++++++++++++++++++++++
+ monitor.h      |   3 ++
+ monitor_wrap.c |  18 +++++++++
+ servconf.c     |  56 +++++++++++++++++++++++++++
+ servconf.h     |  10 +++++
+ sshd.1m        |  27 +++++++++++++
+ sshd.c         |   5 +++
+ sshd_config.4  |  18 ++++++++-
+ 11 files changed, 379 insertions(+), 4 deletions(-)
+
+diff --git a/auth-pam.c b/auth-pam.c
+index b941991..7bdee5c 100644
+--- a/auth-pam.c
++++ b/auth-pam.c
 @@ -617,6 +617,72 @@ sshpam_cleanup(void)
  	sshpam_handle = NULL;
  }
@@ -157,9 +177,10 @@ diff -pur old/auth-pam.c new/auth-pam.c
  	sshpam_authctxt = authctxt;
  
  	if (sshpam_err != PAM_SUCCESS) {
-diff -pur old/auth.h new/auth.h
---- old/auth.h	2015-03-16 22:49:20.000000000 -0700
-+++ new/auth.h	2015-04-28 06:18:25.719914272 -0700
+diff --git a/auth.h b/auth.h
+index 8b27575..a0e41a4 100644
+--- a/auth.h
++++ b/auth.h
 @@ -81,6 +81,9 @@ struct Authctxt {
  
  	struct sshkey	**prev_userkeys;
@@ -170,10 +191,11 @@ diff -pur old/auth.h new/auth.h
  };
  /*
   * Every authentication method has to handle authentication requests for
-diff -pur old/auth2.c new/auth2.c
---- old/auth2.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/auth2.c	2015-04-28 06:15:57.419262466 -0700
-@@ -243,10 +243,21 @@ input_userauth_request(int type, u_int32
+diff --git a/auth2.c b/auth2.c
+index 7177962..32ba663 100644
+--- a/auth2.c
++++ b/auth2.c
+@@ -243,10 +243,21 @@ input_userauth_request(int type, u_int32_t seq, void *ctxt)
  			PRIVSEP(audit_event(SSH_INVALID_USER));
  #endif
  		}
@@ -195,7 +217,7 @@ diff -pur old/auth2.c new/auth2.c
  		setproctitle("%s%s", authctxt->valid ? user : "unknown",
  		    use_privsep ? " [net]" : "");
  		authctxt->service = xstrdup(service);
-@@ -277,6 +288,18 @@ input_userauth_request(int type, u_int32
+@@ -277,6 +288,18 @@ input_userauth_request(int type, u_int32_t seq, void *ctxt)
  	/* try to authenticate user */
  	m = authmethod_lookup(authctxt, method);
  	if (m != NULL && authctxt->failures < options.max_authtries) {
@@ -214,7 +236,7 @@ diff -pur old/auth2.c new/auth2.c
  		debug2("input_userauth_request: try method %s", method);
  		authenticated =	m->userauth(authctxt);
  	}
-@@ -295,6 +318,10 @@ userauth_finish(Authctxt *authctxt, int
+@@ -295,6 +318,10 @@ userauth_finish(Authctxt *authctxt, int authenticated, const char *method,
  	char *methods;
  	int partial = 0;
  
@@ -225,7 +247,7 @@ diff -pur old/auth2.c new/auth2.c
  	if (!authctxt->valid && authenticated)
  		fatal("INTERNAL ERROR: authenticated invalid user %s",
  		    authctxt->user);
-@@ -311,6 +338,25 @@ userauth_finish(Authctxt *authctxt, int
+@@ -311,6 +338,25 @@ userauth_finish(Authctxt *authctxt, int authenticated, const char *method,
  	}
  
  	if (authenticated && options.num_auth_methods != 0) {
@@ -251,7 +273,7 @@ diff -pur old/auth2.c new/auth2.c
  		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
  			authenticated = 0;
  			partial = 1;
-@@ -324,7 +370,20 @@ userauth_finish(Authctxt *authctxt, int
+@@ -324,7 +370,20 @@ userauth_finish(Authctxt *authctxt, int authenticated, const char *method,
  		return;
  
  #ifdef USE_PAM
@@ -272,15 +294,16 @@ diff -pur old/auth2.c new/auth2.c
  		if (!PRIVSEP(do_pam_account())) {
  			/* if PAM returned a message, send it to the user */
  			if (buffer_len(&loginmsg) > 0) {
-@@ -615,5 +674,3 @@ auth2_update_methods_lists(Authctxt *aut
+@@ -615,5 +674,3 @@ auth2_update_methods_lists(Authctxt *authctxt, const char *method,
  		fatal("%s: method not in AuthenticationMethods", __func__);
  	return 0;
  }
 -
 -
-diff -pur old/monitor.c new/monitor.c
---- old/monitor.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/monitor.c	2015-04-28 06:15:57.421294814 -0700
+diff --git a/monitor.c b/monitor.c
+index a914209..b3efbb0 100644
+--- a/monitor.c
++++ b/monitor.c
 @@ -127,6 +127,9 @@ int mm_answer_sign(int, Buffer *);
  int mm_answer_pwnamallow(int, Buffer *);
  int mm_answer_auth2_read_banner(int, Buffer *);
@@ -291,7 +314,7 @@ diff -pur old/monitor.c new/monitor.c
  int mm_answer_authpassword(int, Buffer *);
  int mm_answer_bsdauthquery(int, Buffer *);
  int mm_answer_bsdauthrespond(int, Buffer *);
-@@ -206,10 +209,17 @@ struct mon_table mon_dispatch_proto20[]
+@@ -206,10 +209,17 @@ struct mon_table mon_dispatch_proto20[] = {
      {MONITOR_REQ_SIGN, MON_ONCE, mm_answer_sign},
      {MONITOR_REQ_PWNAM, MON_ONCE, mm_answer_pwnamallow},
      {MONITOR_REQ_AUTHSERV, MON_ONCE, mm_answer_authserv},
@@ -309,7 +332,7 @@ diff -pur old/monitor.c new/monitor.c
      {MONITOR_REQ_PAM_ACCOUNT, 0, mm_answer_pam_account},
      {MONITOR_REQ_PAM_INIT_CTX, MON_ISAUTH, mm_answer_pam_init_ctx},
      {MONITOR_REQ_PAM_QUERY, MON_ISAUTH, mm_answer_pam_query},
-@@ -371,6 +381,24 @@ monitor_child_preauth(Authctxt *_authctx
+@@ -371,6 +381,24 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
  			if (!compat20)
  				fatal("AuthenticationMethods is not supported"
  				    "with SSH protocol 1");
@@ -334,7 +357,7 @@ diff -pur old/monitor.c new/monitor.c
  			if (authenticated &&
  			    !auth2_update_methods_lists(authctxt,
  			    auth_method, auth_submethod)) {
-@@ -389,8 +417,21 @@ monitor_child_preauth(Authctxt *_authctx
+@@ -389,8 +417,21 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
  			    !auth_root_allowed(auth_method))
  				authenticated = 0;
  #ifdef USE_PAM
@@ -356,7 +379,7 @@ diff -pur old/monitor.c new/monitor.c
  				Buffer m;
  
  				buffer_init(&m);
-@@ -863,6 +904,10 @@ mm_answer_pwnamallow(int sock, Buffer *m
+@@ -863,6 +904,10 @@ mm_answer_pwnamallow(int sock, Buffer *m)
  		/* Allow service/style information on the auth context */
  		monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
  		monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
@@ -392,9 +415,10 @@ diff -pur old/monitor.c new/monitor.c
  int
  mm_answer_authpassword(int sock, Buffer *m)
  {
-diff -pur old/monitor.h new/monitor.h
---- old/monitor.h	2015-03-16 22:49:20.000000000 -0700
-+++ new/monitor.h	2015-04-28 06:15:57.421684373 -0700
+diff --git a/monitor.h b/monitor.h
+index 93b8b66..da63e7d 100644
+--- a/monitor.h
++++ b/monitor.h
 @@ -65,6 +65,9 @@ enum monitor_reqtype {
  	MONITOR_REQ_PAM_FREE_CTX = 110, MONITOR_ANS_PAM_FREE_CTX = 111,
  	MONITOR_REQ_AUDIT_EVENT = 112, MONITOR_REQ_AUDIT_COMMAND = 113,
@@ -405,10 +429,11 @@ diff -pur old/monitor.h new/monitor.h
  };
  
  struct mm_master;
-diff -pur old/monitor_wrap.c new/monitor_wrap.c
---- old/monitor_wrap.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/monitor_wrap.c	2015-04-28 06:15:57.419906674 -0700
-@@ -347,6 +347,24 @@ mm_inform_authserv(char *service, char *
+diff --git a/monitor_wrap.c b/monitor_wrap.c
+index eac421b..95231a3 100644
+--- a/monitor_wrap.c
++++ b/monitor_wrap.c
+@@ -345,6 +345,24 @@ mm_inform_authserv(char *service, char *style)
  	buffer_free(&m);
  }
  
@@ -433,10 +458,11 @@ diff -pur old/monitor_wrap.c new/monitor_wrap.c
  /* Do the password authentication */
  int
  mm_auth_password(Authctxt *authctxt, char *password)
-diff -pur old/servconf.c new/servconf.c
---- old/servconf.c	2015-04-28 06:15:57.300968063 -0700
-+++ new/servconf.c	2015-04-28 06:27:06.330272555 -0700
-@@ -163,6 +163,18 @@ initialize_server_options(ServerOptions
+diff --git a/servconf.c b/servconf.c
+index ad884ec..d0ca777 100644
+--- a/servconf.c
++++ b/servconf.c
+@@ -169,6 +169,18 @@ initialize_server_options(ServerOptions *options)
  	options->ip_qos_bulk = -1;
  	options->version_addendum = NULL;
  	options->fingerprint_hash = -1;
@@ -455,7 +481,7 @@ diff -pur old/servconf.c new/servconf.c
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -332,6 +344,12 @@ fill_default_server_options(ServerOption
+@@ -340,6 +352,12 @@ fill_default_server_options(ServerOptions *options)
  		options->ip_qos_bulk = IPTOS_THROUGHPUT;
  	if (options->version_addendum == NULL)
  		options->version_addendum = xstrdup("");
@@ -468,7 +494,7 @@ diff -pur old/servconf.c new/servconf.c
  	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
  		options->fwd_opts.streamlocal_bind_mask = 0177;
  	if (options->fwd_opts.streamlocal_bind_unlink == -1)
-@@ -400,6 +418,9 @@ typedef enum {
+@@ -421,6 +439,9 @@ typedef enum {
  	sMatch, sPermitOpen, sForceCommand, sChrootDirectory,
  	sUsePrivilegeSeparation, sAllowAgentForwarding,
  	sHostCertificate,
@@ -476,9 +502,9 @@ diff -pur old/servconf.c new/servconf.c
 +	sPAMServicePrefix, sPAMServiceName,
 +#endif
  	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
+ 	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
  	sKexAlgorithms, sIPQoS, sVersionAddendum,
- 	sAuthorizedKeysCommand, sAuthorizedKeysCommandUser,
-@@ -534,6 +555,10 @@ static struct {
+@@ -559,6 +580,10 @@ static struct {
  	{ "forcecommand", sForceCommand, SSHCFG_ALL },
  	{ "chrootdirectory", sChrootDirectory, SSHCFG_ALL },
  	{ "hostcertificate", sHostCertificate, SSHCFG_GLOBAL },
@@ -489,7 +515,7 @@ diff -pur old/servconf.c new/servconf.c
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
  	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
-@@ -1765,6 +1790,37 @@ process_server_config_line(ServerOptions
+@@ -1865,6 +1890,37 @@ process_server_config_line(ServerOptions *options, char *line,
  			options->fingerprint_hash = value;
  		break;
  
@@ -527,9 +553,10 @@ diff -pur old/servconf.c new/servconf.c
  	case sDeprecated:
  		logit("%s line %d: Deprecated option %s",
  		    filename, linenum, arg);
-diff -pur old/servconf.h new/servconf.h
---- old/servconf.h	2015-03-16 22:49:20.000000000 -0700
-+++ new/servconf.h	2015-04-28 06:28:25.181429777 -0700
+diff --git a/servconf.h b/servconf.h
+index f4137af..8c86b57 100644
+--- a/servconf.h
++++ b/servconf.h
 @@ -54,6 +54,10 @@
  /* Magic name for internal sftp-server */
  #define INTERNAL_SFTP_NAME	"internal-sftp"
@@ -541,7 +568,7 @@ diff -pur old/servconf.h new/servconf.h
  typedef struct {
  	u_int	num_ports;
  	u_int	ports_from_cmdline;
-@@ -188,6 +192,12 @@ typedef struct {
+@@ -194,6 +198,12 @@ typedef struct {
  	u_int	num_auth_methods;
  	char   *auth_methods[MAX_AUTH_METHODS];
  
@@ -554,10 +581,11 @@ diff -pur old/servconf.h new/servconf.h
  	int	fingerprint_hash;
  }       ServerOptions;
  
-diff -pur old/sshd.8 new/sshd.8
---- old/sshd.8	2015-04-28 06:15:57.254681499 -0700
-+++ new/sshd.8	2015-04-28 06:15:57.426325504 -0700
-@@ -945,6 +945,33 @@ concurrently for different ports, this c
+diff --git a/sshd.1m b/sshd.1m
+index 967a753..d67efd7 100644
+--- a/sshd.1m
++++ b/sshd.1m
+@@ -944,6 +944,33 @@ concurrently for different ports, this contains the process ID of the one
  started last).
  The content of this file is not sensitive; it can be world-readable.
  .El
@@ -591,10 +619,11 @@ diff -pur old/sshd.8 new/sshd.8
  .Sh SEE ALSO
  .Xr scp 1 ,
  .Xr sftp 1 ,
-diff -pur old/sshd.c new/sshd.c
---- old/sshd.c	2015-04-28 06:15:57.302106750 -0700
-+++ new/sshd.c	2015-04-28 06:15:57.427449259 -0700
-@@ -2146,6 +2146,11 @@ main(int ac, char **av)
+diff --git a/sshd.c b/sshd.c
+index 3df50f8..5a00ae2 100644
+--- a/sshd.c
++++ b/sshd.c
+@@ -2159,6 +2159,11 @@ main(int ac, char **av)
  
  	sshd_exchange_identification(sock_in, sock_out);
  
@@ -606,10 +635,11 @@ diff -pur old/sshd.c new/sshd.c
  	/* In inetd mode, generate ephemeral key only for proto 1 connections */
  	if (!compat20 && inetd_flag && sensitive_data.server_key == NULL)
  		generate_ephemeral_server_key();
-diff -pur old/sshd_config.5 new/sshd_config.5
---- old/sshd_config.5	2015-04-28 06:15:57.256560985 -0700
-+++ new/sshd_config.5	2015-04-28 06:15:57.425661853 -0700
-@@ -1044,6 +1044,21 @@ The probability increases linearly and a
+diff --git a/sshd_config.4 b/sshd_config.4
+index ba4d79a..263175b 100644
+--- a/sshd_config.4
++++ b/sshd_config.4
+@@ -1160,6 +1160,21 @@ The probability increases linearly and all connection attempts
  are refused if the number of unauthenticated connections reaches
  .Dq full
  (60).
@@ -631,7 +661,7 @@ diff -pur old/sshd_config.5 new/sshd_config.5
  .It Cm PasswordAuthentication
  Specifies whether password authentication is allowed.
  The default is
-@@ -1427,8 +1442,7 @@ If
+@@ -1573,8 +1588,7 @@ If
  is enabled, you will not be able to run
  .Xr sshd 1M
  as a non-root user.
@@ -641,3 +671,6 @@ diff -pur old/sshd_config.5 new/sshd_config.5
  .It Cm UsePrivilegeSeparation
  Specifies whether
  .Xr sshd 1M
+-- 
+2.3.2 (Apple Git-55)
+

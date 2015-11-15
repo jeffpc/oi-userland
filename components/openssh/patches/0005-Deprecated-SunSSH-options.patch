@@ -1,15 +1,26 @@
+From 37d92f09f21caffae3600d33f8e3390ad766e774 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:35:12 -0700
+Subject: [PATCH 05/30] Deprecated SunSSH options
+
 #
 # To make the transition from SunSSH to OpenSSH as smooth as possible, we
 # added SunSSH-only options as deprecated options in OpenSSH. Note that this
-# is an interim enhancement to OpenSSH to make the transition smoother. If a 
+# is an interim enhancement to OpenSSH to make the transition smoother. If a
 # deprecated SunSSH-only option is migrated to OpenSSH later, then it will be
 # changed from deprecated to supported. Since this is for Solaris only, we will
 # not contribute back this change to the upstream community.
 #
---- old/readconf.c	2014-01-17 05:03:57.000000000 -0800
-+++ new/readconf.c	2014-11-22 04:15:00.066981692 -0800
-@@ -268,6 +268,24 @@ static struct {
- 	{ "canonicalizepermittedcnames", oCanonicalizePermittedCNAMEs },
+---
+ readconf.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/readconf.c b/readconf.c
+index 1d03bdf..79d2678 100644
+--- a/readconf.c
++++ b/readconf.c
+@@ -279,6 +279,24 @@ static struct {
+ 	{ "pubkeyacceptedkeytypes", oPubkeyAcceptedKeyTypes },
  	{ "ignoreunknown", oIgnoreUnknown },
  
 +#ifdef DEPRECATE_SUNSSH_OPT
@@ -33,3 +44,6 @@
  	{ NULL, oBadOption }
  };
  
+-- 
+2.3.2 (Apple Git-55)
+

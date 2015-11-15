@@ -23,18 +23,18 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
-COMPONENT_VERSION=	6.8p1
+COMPONENT_VERSION=	7.1p1
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
 # Version for IPS.  The encoding rules are:
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-IPS_COMPONENT_VERSION=	6.8.0.1
+IPS_COMPONENT_VERSION=	7.1.0.1
 
 COMPONENT_PROJECT_URL=	http://www.openssh.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:3ff64ce73ee124480b5bf767b9830d7d3c03bbcb6abe716b78f0192c37ce160e
+COMPONENT_ARCHIVE_HASH=	sha256:fc0a6d2d1d063d5c66dffd952493d0cda256cad204f681de0f84ef85b2ad8428
 COMPONENT_ARCHIVE_URL=	http://mirror.team-cymru.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=utility/openssh
 
@@ -48,6 +48,8 @@ include $(WS_MAKE_RULES)/ips.mk
 # Enable ASLR for this component
 # ASLR_MODE = $(ASLR_ENABLE)
 
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
+
 CFLAGS += -DSET_USE_PAM
 CFLAGS += -DDEPRECATE_SUNSSH_OPT
 CFLAGS += -DKRB5_BUILD_FIX
@@ -56,7 +58,7 @@ CFLAGS += -DDISABLE_BANNER
 CFLAGS += -DPAM_ENHANCEMENT
 CFLAGS += -DPAM_BUGFIX
 CFLAGS += -DOPTION_DEFAULT_VALUE
-CFLAGS += -DWITHOUT_ED25519
+CFLAGS += -DHAVE_EVP_SHA256
 CFLAGS += -DPER_SESSION_XAUTHFILE
 CFLAGS += -I/usr/include/kerberosv5/
 
@@ -83,15 +85,6 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc/ssh
 CONFIGURE_OPTIONS += --bindir=/usr/bin
 CONFIGURE_OPTIONS += --disable-lastlog
 
-# Copy the sftp dtrace provider file and the header file to source directory
-COMPONENT_PRE_BUILD_ACTION = \
-    ( echo "Copying dtrace sftp files..."; \
-      $(LN) -fs $(COMPONENT_DIR)/dtrace_sftp/*.[dh] $(SOURCE_DIR); \
-    )
-
-# Copy source files that are not yet part of a patch
-COMPONENT_PREP_ACTION += ($(CP) sources/*.c $(@D)/)
-
 # common targets
 build:		$(BUILD_32)
 
@@ -100,5 +93,3 @@ install:	$(INSTALL_32)
 # Because of certain set up requirement, the regress test suite is ported to
 # the STC gate.
 test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)

@@ -7,8 +7,8 @@
 # In the future, if this fix is accepted by the upsteam in a later release, we
 # will remove this patch when we upgrade to that release.
 #
---- orig/session.c	Thu Jul 30 10:35:15 2015
-+++ new/session.c	Tue Aug  4 11:29:22 2015
+--- orig/session.c	2015-11-15 08:54:10.661534666 +0300
++++ new/session.c	2015-11-15 08:54:10.715879876 +0300
 @@ -62,6 +62,10 @@
  #include <unistd.h>
  #include <limits.h>
@@ -32,9 +32,9 @@
  /* import */
  extern ServerOptions options;
  extern char *__progname;
-@@ -1218,6 +1227,11 @@
- 	if (getenv("TZ"))
- 		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
+@@ -1240,6 +1249,11 @@
+ 
+ 	child_inherit_env(&env, &envsize, "TZ");
  
 +#ifdef PER_SESSION_XAUTHFILE
 +        if (s->auth_file != NULL)
@@ -44,7 +44,7 @@
  	/* Set custom environment options from RSA authentication. */
  	if (!options.use_login) {
  		while (custom_environment) {
-@@ -2170,6 +2184,11 @@
+@@ -2192,6 +2206,11 @@
  {
  	int success;
  
@@ -56,7 +56,7 @@
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -2188,6 +2207,48 @@
+@@ -2210,6 +2229,48 @@
  		s->auth_proto = NULL;
  		s->auth_data = NULL;
  	}
@@ -105,7 +105,7 @@
  	return success;
  }
  
-@@ -2378,6 +2439,50 @@
+@@ -2400,6 +2461,50 @@
  	PRIVSEP(session_pty_cleanup2(s));
  }
  
@@ -156,7 +156,7 @@
  static char *
  sig2name(int sig)
  {
-@@ -2512,6 +2617,9 @@
+@@ -2534,6 +2639,9 @@
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -166,7 +166,7 @@
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2763,6 +2871,10 @@
+@@ -2785,6 +2893,10 @@
  	/* remove agent socket */
  	auth_sock_cleanup_proc(authctxt->pw);
  

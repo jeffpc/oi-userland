@@ -1,3 +1,8 @@
+From 994cd838cac9f44896b59bfa5f70a7c55e3168d8 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:36:27 -0700
+Subject: [PATCH 12/30] No UID restoration test
+
 #
 # OpenSSH verifies, that changing [ug]id back to 0 fails, after it
 # was set to the values of the user logging in.
@@ -20,10 +25,15 @@
 #
 # See the above URL for details on if/when it might be accepted.
 #
-diff -ur old/uidswap.c new/uidswap.c
---- old/uidswap.c	2014-01-18 01:43:50.000000000 -0800
-+++ new/uidswap.c	2014-09-04 06:26:32.965065384 -0700
-@@ -134,7 +134,7 @@
+---
+ uidswap.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/uidswap.c b/uidswap.c
+index 0702e1d..188482b 100644
+--- a/uidswap.c
++++ b/uidswap.c
+@@ -134,7 +134,7 @@ temporarily_use_uid(struct passwd *pw)
  void
  permanently_drop_suid(uid_t uid)
  {
@@ -32,7 +42,7 @@ diff -ur old/uidswap.c new/uidswap.c
  	uid_t old_uid = getuid();
  #endif
  
-@@ -142,7 +142,7 @@
+@@ -142,7 +142,7 @@ permanently_drop_suid(uid_t uid)
  	if (setresuid(uid, uid, uid) < 0)
  		fatal("setresuid %u: %.100s", (u_int)uid, strerror(errno));
  
@@ -41,7 +51,7 @@ diff -ur old/uidswap.c new/uidswap.c
  	/* Try restoration of UID if changed (test clearing of saved uid) */
  	if (old_uid != uid &&
  	    (setuid(old_uid) != -1 || seteuid(old_uid) != -1))
-@@ -199,7 +199,7 @@
+@@ -199,7 +199,7 @@ restore_uid(void)
  void
  permanently_set_uid(struct passwd *pw)
  {
@@ -50,7 +60,7 @@ diff -ur old/uidswap.c new/uidswap.c
  	uid_t old_uid = getuid();
  	gid_t old_gid = getgid();
  #endif
-@@ -227,7 +227,7 @@
+@@ -227,7 +227,7 @@ permanently_set_uid(struct passwd *pw)
  	if (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) < 0)
  		fatal("setresuid %u: %.100s", (u_int)pw->pw_uid, strerror(errno));
  
@@ -59,7 +69,7 @@ diff -ur old/uidswap.c new/uidswap.c
  	/* Try restoration of GID if changed (test clearing of saved gid) */
  	if (old_gid != pw->pw_gid && pw->pw_uid != 0 &&
  	    (setgid(old_gid) != -1 || setegid(old_gid) != -1))
-@@ -241,7 +241,7 @@
+@@ -241,7 +241,7 @@ permanently_set_uid(struct passwd *pw)
  		    (u_int)pw->pw_gid);
  	}
  
@@ -68,3 +78,6 @@ diff -ur old/uidswap.c new/uidswap.c
  	/* Try restoration of UID if changed (test clearing of saved uid) */
  	if (old_uid != pw->pw_uid &&
  	    (setuid(old_uid) != -1 || seteuid(old_uid) != -1))
+-- 
+2.3.2 (Apple Git-55)
+

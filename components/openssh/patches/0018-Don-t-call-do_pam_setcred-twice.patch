@@ -1,3 +1,8 @@
+From a6668bd2161e00f58429adcf1e8ee27de67bb04c Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:38:41 -0700
+Subject: [PATCH 18/30] Don't call do_pam_setcred twice
+
 # This issue has been raised with the upstream OpenSSH community:
 #
 # 2426 OpenSSH doesn't need the second call to do_pam_setcred() on non-Linux
@@ -20,10 +25,15 @@
 # In short, this additional call to do_pam_setcred() is Linux-specific and
 # shouldn't be called on Solaris.
 #
-diff -pur old/platform.c new/platform.c
---- old/platform.c	2015-07-02 04:21:38.155790601 -0700
-+++ new/platform.c	2015-07-02 05:11:06.302125686 -0700
-@@ -145,7 +145,7 @@ platform_setusercontext(struct passwd *p
+---
+ platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/platform.c b/platform.c
+index ee313da..8362a08 100644
+--- a/platform.c
++++ b/platform.c
+@@ -145,7 +145,7 @@ platform_setusercontext(struct passwd *pw)
  void
  platform_setusercontext_post_groups(struct passwd *pw)
  {
@@ -32,3 +42,6 @@ diff -pur old/platform.c new/platform.c
  	/*
  	 * PAM credentials may take the form of supplementary groups.
  	 * These will have been wiped by the above initgroups() call.
+-- 
+2.3.2 (Apple Git-55)
+

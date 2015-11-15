@@ -1,14 +1,27 @@
+From 2be8047e24685b6a21c528c452c875822bae04a0 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:36:00 -0700
+Subject: [PATCH 08/30] Add DisableBanner option
+
 #
 # This patch is to add a new DisableBanner option to the ssh client command,
 # which allows the ssh command to disable the display of the banner message.
 # We have contributed back this feature to the OpenSSH upstream community. For
 # more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2242.
 # In the future, if this feature is accepted by the upsteam in a later release,
-# we will remove this patch when we upgrade to that release.  
+# we will remove this patch when we upgrade to that release.
 #
-diff -pur old/readconf.c new/readconf.c
---- old/readconf.c	2015-03-28 21:57:35.551727235 +0100
-+++ new/readconf.c	2015-03-28 22:06:01.694836272 +0100
+---
+ readconf.c    | 31 +++++++++++++++++++++++++++++++
+ readconf.h    |  9 +++++++++
+ ssh_config.4  |  8 ++++++++
+ sshconnect2.c | 17 +++++++++++++++++
+ 4 files changed, 65 insertions(+)
+
+diff --git a/readconf.c b/readconf.c
+index 79d2678..a5c8854 100644
+--- a/readconf.c
++++ b/readconf.c
 @@ -150,6 +150,9 @@ typedef enum {
  	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
  	oSendEnv, oControlPath, oControlMaster, oControlPersist,
@@ -19,7 +32,7 @@ diff -pur old/readconf.c new/readconf.c
  	oTunnel, oTunnelDevice, oLocalCommand, oPermitLocalCommand,
  	oVisualHostKey, oUseRoaming,
  	oKexAlgorithms, oIPQoS, oRequestTTY, oIgnoreUnknown, oProxyUseFdpass,
-@@ -254,6 +257,9 @@ static struct {
+@@ -255,6 +258,9 @@ static struct {
  	{ "controlmaster", oControlMaster },
  	{ "controlpersist", oControlPersist },
  	{ "hashknownhosts", oHashKnownHosts },
@@ -29,7 +42,7 @@ diff -pur old/readconf.c new/readconf.c
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -754,6 +760,17 @@ static const struct multistate multistat
+@@ -754,6 +760,17 @@ static const struct multistate multistate_canonicalizehostname[] = {
  	{ NULL, -1 }
  };
  
@@ -47,9 +60,9 @@ diff -pur old/readconf.c new/readconf.c
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -1514,6 +1531,13 @@ parse_int:
- 			*charptr = xstrdup(arg);
- 		break;
+@@ -1514,6 +1531,13 @@ parse_keytypes:
+ 		charptr = &options->pubkey_key_types;
+ 		goto parse_keytypes;
  
 +#ifdef DISABLE_BANNER
 +	case oDisableBanner:
@@ -71,7 +84,7 @@ diff -pur old/readconf.c new/readconf.c
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -1871,6 +1898,10 @@ fill_default_options(Options * options)
+@@ -1869,6 +1896,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -82,11 +95,12 @@ diff -pur old/readconf.c new/readconf.c
  	if (options->fingerprint_hash == -1)
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  	if (options->update_hostkeys == -1)
-diff -pur old/readconf.h new/readconf.h
---- old/readconf.h	2015-03-17 06:49:20.000000000 +0100
-+++ new/readconf.h	2015-03-28 21:57:35.684348892 +0100
-@@ -153,6 +153,9 @@ typedef struct {
- 	char	*hostbased_key_types;
+diff --git a/readconf.h b/readconf.h
+index bb2d552..b961309 100644
+--- a/readconf.h
++++ b/readconf.h
+@@ -154,6 +154,9 @@ typedef struct {
+ 	char   *pubkey_key_types;
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 +#ifdef DISABLE_BANNER
@@ -95,7 +109,7 @@ diff -pur old/readconf.h new/readconf.h
  }       Options;
  
  #define SSH_CANONICALISE_NO	0
-@@ -178,6 +181,12 @@ typedef struct {
+@@ -179,6 +182,12 @@ typedef struct {
  #define SSH_UPDATE_HOSTKEYS_YES	1
  #define SSH_UPDATE_HOSTKEYS_ASK	2
  
@@ -108,10 +122,11 @@ diff -pur old/readconf.h new/readconf.h
  void     initialize_options(Options *);
  void     fill_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
-diff -pur old/ssh_config.5 new/ssh_config.5
---- old/ssh_config.5	2015-03-28 21:57:35.544033907 +0100
-+++ new/ssh_config.5	2015-03-28 21:57:35.684635985 +0100
-@@ -566,6 +566,14 @@ If set to a time in seconds, or a time i
+diff --git a/ssh_config.4 b/ssh_config.4
+index 8c099eb..6325b3a 100644
+--- a/ssh_config.4
++++ b/ssh_config.4
+@@ -572,6 +572,14 @@ If set to a time in seconds, or a time in any of the formats documented in
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -126,9 +141,10 @@ diff -pur old/ssh_config.5 new/ssh_config.5
  .It Cm DynamicForward
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
-diff -pur old/sshconnect2.c new/sshconnect2.c
---- old/sshconnect2.c	2015-03-17 06:49:20.000000000 +0100
-+++ new/sshconnect2.c	2015-03-28 21:57:35.684940995 +0100
+diff --git a/sshconnect2.c b/sshconnect2.c
+index 7751031..95593b9 100644
+--- a/sshconnect2.c
++++ b/sshconnect2.c
 @@ -81,6 +81,10 @@ extern char *client_version_string;
  extern char *server_version_string;
  extern Options options;
@@ -140,7 +156,7 @@ diff -pur old/sshconnect2.c new/sshconnect2.c
  /*
   * SSH2 key exchange
   */
-@@ -480,7 +484,20 @@ input_userauth_banner(int type, u_int32_
+@@ -473,7 +477,20 @@ input_userauth_banner(int type, u_int32_t seq, void *ctxt)
  	debug3("input_userauth_banner");
  	raw = packet_get_string(&len);
  	lang = packet_get_string(NULL);
@@ -161,3 +177,6 @@ diff -pur old/sshconnect2.c new/sshconnect2.c
  		if (len > 65536)
  			len = 65536;
  		msg = xmalloc(len * 4 + 1); /* max expansion from strnvis() */
+-- 
+2.3.2 (Apple Git-55)
+

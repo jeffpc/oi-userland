@@ -14,12 +14,11 @@ new daemon.
  compat.c | 31 ++++++++++++++++++++++++++++++-
  1 file changed, 30 insertions(+), 1 deletion(-)
 
-Changes from Joyent version: backported compat_kex_proposal()
-from OpenSSH trunk.  
-
---- openssh-6.8p1/compat.c.~1~	2015-03-17 08:49:20.000000000 +0300
-+++ openssh-6.8p1/compat.c	2015-11-12 23:14:49.037350481 +0300
-@@ -92,7 +92,9 @@
+diff --git a/compat.c b/compat.c
+index 5583804..e2bebee 100644
+--- a/compat.c
++++ b/compat.c
+@@ -92,7 +92,9 @@ compat_datafellows(const char *version)
  		  "OpenSSH_3.0*,"
  		  "OpenSSH_3.1*",	SSH_BUG_EXTEOF|SSH_OLD_FORWARD_ADDR},
  		{ "OpenSSH_3.*",	SSH_OLD_FORWARD_ADDR },
@@ -30,7 +29,7 @@ from OpenSSH trunk.
  		{ "OpenSSH_4*",		0 },
  		{ "OpenSSH_5*",		SSH_NEW_OPENSSH|SSH_BUG_DYNAMIC_RPORT},
  		{ "OpenSSH_6.6.1*",	SSH_NEW_OPENSSH},
-@@ -244,6 +246,31 @@
+@@ -279,6 +281,31 @@ filter_proposal(char *proposal, const char *filter)
  	return fix_prop;
  }
  
@@ -62,34 +61,15 @@ from OpenSSH trunk.
  char *
  compat_cipher_proposal(char *cipher_prop)
  {
-@@ -271,15 +298,21 @@
- }
- 
- char *
--compat_kex_proposal(char *kex_prop)
-+compat_kex_proposal(char *p)
- {
--	if (!(datafellows & SSH_BUG_CURVE25519PAD))
--		return kex_prop;
--	debug2("%s: original KEX proposal: %s", __func__, kex_prop);
--	kex_prop = filter_proposal(kex_prop, "curve25519-sha256@libssh.org");
--	debug2("%s: compat KEX proposal: %s", __func__, kex_prop);
--	if (*kex_prop == '\0')
-+	if ((datafellows & (SSH_BUG_CURVE25519PAD|SSH_OLD_DHGEX)) == 0)
-+		return p;
-+	debug2("%s: original KEX proposal: %s", __func__, p);
-+	if ((datafellows & SSH_BUG_CURVE25519PAD) != 0)
-+		p = filter_proposal(p, "curve25519-sha256@libssh.org");
-+	if ((datafellows & SSH_OLD_DHGEX) != 0) {
-+		p = filter_proposal(p, "diffie-hellman-group-exchange-sha256");
-+		p = filter_proposal(p, "diffie-hellman-group-exchange-sha1");
+@@ -316,6 +343,8 @@ compat_kex_proposal(char *p)
+ 	if ((datafellows & SSH_OLD_DHGEX) != 0) {
+ 		p = filter_proposal(p, "diffie-hellman-group-exchange-sha256");
+ 		p = filter_proposal(p, "diffie-hellman-group-exchange-sha1");
 +		p = append_proposal(p, "diffie-hellman-group14-sha1");
 +		p = append_proposal(p, "diffie-hellman-group1-sha1");
-+	}
-+	debug2("%s: compat KEX proposal: %s", __func__, p);
-+	if (*p == '\0')
- 		fatal("No supported key exchange algorithms found");
--	return kex_prop;
-+	return p;
- }
--
+ 	}
+ 	debug2("%s: compat KEX proposal: %s", __func__, p);
+ 	if (*p == '\0')
+-- 
+2.3.2 (Apple Git-55)
+

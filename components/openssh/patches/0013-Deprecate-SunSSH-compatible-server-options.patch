@@ -1,5 +1,10 @@
+From 2304a78627fc8dcce71cd5189c44d289449cae41 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:36:33 -0700
+Subject: [PATCH 13/30] Deprecate SunSSH compatible server options
+
 #
-# Originally we planned to only deprecate client config (ssh_config) options 
+# Originally we planned to only deprecate client config (ssh_config) options
 # and leave it up to system administrators to remove all SunSSH specific
 # server config (sshd_config) options. In internal testing we have discovered,
 # that this would bring too much trouble to the said administrators.
@@ -13,9 +18,15 @@
 # This is a Solaris specific change to ease the transition and will not be
 # offered upstream.
 #
---- orig/servconf.c	Tue Jul 21 16:34:07 2015
-+++ new/servconf.c	Tue Jul 21 17:00:39 2015
-@@ -567,6 +567,29 @@
+---
+ servconf.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/servconf.c b/servconf.c
+index dab8945..1a68479 100644
+--- a/servconf.c
++++ b/servconf.c
+@@ -592,6 +592,29 @@ static struct {
  	{ "pamserviceprefix", sPAMServicePrefix, SSHCFG_GLOBAL },
  	{ "pamservicename", sPAMServiceName, SSHCFG_GLOBAL },
  #endif
@@ -45,3 +56,6 @@
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
  	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
+-- 
+2.3.2 (Apple Git-55)
+
