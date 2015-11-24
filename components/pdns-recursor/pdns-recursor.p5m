@@ -27,7 +27,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform dir  path=etc/powerdns$ -> default owner powerdns>
 <transform dir  path=etc/powerdns$ -> default group powerdns>
 
-file files/recursor.conf path=etc/powerdns/recursor.conf owner=powerdns group=powerdns
+file files/recursor.conf path=etc/powerdns/recursor.conf owner=powerdns group=powerdns preserve=true
 dir  path=lib
 dir  path=lib/svc
 dir  path=lib/svc/manifest
