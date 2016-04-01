@@ -1,0 +1,47 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+dir  path=usr
+dir  path=usr/include
+dir  path=usr/include/jeffpc
+file path=usr/include/jeffpc/atomic.h
+file path=usr/include/jeffpc/config.h
+file path=usr/include/jeffpc/error.h
+file path=usr/include/jeffpc/hexdump.h
+file path=usr/include/jeffpc/int.h
+file path=usr/include/jeffpc/io.h
+file path=usr/include/jeffpc/jeffpc.h
+file path=usr/include/jeffpc/rand.h
+file path=usr/include/jeffpc/refcnt.h
+file path=usr/include/jeffpc/sexpr.h
+file path=usr/include/jeffpc/str.h
+file path=usr/include/jeffpc/synch.h
+file path=usr/include/jeffpc/thread.h
+file path=usr/include/jeffpc/time.h
+file path=usr/include/jeffpc/uuid.h
+file path=usr/include/jeffpc/val.h
+dir  path=usr/lib
+dir  path=usr/lib/$(MACH64)
+file path=usr/lib/$(MACH64)/libjeffpc.so
+file path=usr/lib/libjeffpc.so
