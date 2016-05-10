@@ -30,9 +30,9 @@ COMPONENT_CLASSIFICATION=Development/Other Languages
 
 CONFIGURE_DEFAULT_DIRS=no
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include ../../../make-rules/prep.mk
+include ../../../make-rules/configure.mk
+include ../../../make-rules/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION=$(CLONEY) $(SOURCE_DIR) $(@D)
 
@@ -46,4 +46,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS) ocaml
 
-include ../../make-rules/depend.mk
+include ../../../make-rules/depend.mk
