@@ -1,0 +1,15 @@
+Only in extlib-1.5.3: .destdir.patched
+diff -ur extlib-1.5.3.orig/Makefile extlib-1.5.3/Makefile
+--- extlib-1.5.3.orig/Makefile	2015-06-15 17:26:36.554647730 -0400
++++ extlib-1.5.3/Makefile	2015-06-15 17:27:56.274403585 -0400
+@@ -24,7 +24,8 @@
+ 	ocamldoc -sort -html -d doc/ $(MLI)
+ 
+ install:
+-	ocamlfind install extlib META extLib.cma $(MLI) $(CMI) -optional extLib.cmxa $(CMX) extLib.cmxs extLib.a extLib.lib
++	mkdir -p $(DESTDIR)/usr/lib/ocaml/site-lib
++	ocamlfind install -destdir $(DESTDIR)/usr/lib/ocaml/site-lib extlib META extLib.cma $(MLI) $(CMI) -optional extLib.cmxa $(CMX) extLib.cmxs extLib.a extLib.lib
+ 
+ uninstall:
+ 	ocamlfind remove extlib
+Only in extlib-1.5.3: Makefile.~1~
