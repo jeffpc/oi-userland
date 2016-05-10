@@ -1,0 +1,12 @@
+diff -ur opam-full-1.2.2.orig/src_ext/Makefile opam-full-1.2.2/src_ext/Makefile
+--- opam-full-1.2.2.orig/src_ext/Makefile	2015-06-12 20:16:21.472276152 -0400
++++ opam-full-1.2.2/src_ext/Makefile	2015-06-12 20:16:47.584892759 -0400
+@@ -53,7 +53,7 @@
+ 
+ %.stamp: %.download
+ 	mkdir -p tmp
+-	cd tmp && tar xf$(if $(patsubst %.tar.gz,,$(URL_$*)),j,z) ../$(notdir $(URL_$*))
++	cd tmp && /usr/gnu/bin/tar xf$(if $(patsubst %.tar.gz,,$(URL_$*)),j,z) ../$(notdir $(URL_$*))
+ 	rm -rf $*
+ 	@for ii in tmp/*; do if [ -d $${ii} ]; then mv $${ii} $*; fi; done; \
+ 	rm -rf tmp
