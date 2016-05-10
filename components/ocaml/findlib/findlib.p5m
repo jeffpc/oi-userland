@@ -1,0 +1,85 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+dir  path=etc
+file path=etc/findlib.conf
+dir  path=usr
+dir  path=usr/bin
+file path=usr/bin/ocamlfind
+dir  path=usr/lib
+dir  path=usr/lib/ocaml
+dir  path=usr/lib/ocaml/site-lib
+dir  path=usr/lib/ocaml/site-lib/bigarray
+file path=usr/lib/ocaml/site-lib/bigarray/META
+dir  path=usr/lib/ocaml/site-lib/bytes
+file path=usr/lib/ocaml/site-lib/bytes/META
+dir  path=usr/lib/ocaml/site-lib/compiler-libs
+file path=usr/lib/ocaml/site-lib/compiler-libs/META
+dir  path=usr/lib/ocaml/site-lib/dynlink
+file path=usr/lib/ocaml/site-lib/dynlink/META
+dir  path=usr/lib/ocaml/site-lib/findlib
+file path=usr/lib/ocaml/site-lib/findlib/META
+file path=usr/lib/ocaml/site-lib/findlib/Makefile.config
+file path=usr/lib/ocaml/site-lib/findlib/findlib.a
+file path=usr/lib/ocaml/site-lib/findlib/findlib.cma
+file path=usr/lib/ocaml/site-lib/findlib/findlib.cmi
+file path=usr/lib/ocaml/site-lib/findlib/findlib.cmxa
+file path=usr/lib/ocaml/site-lib/findlib/findlib.mli
+file path=usr/lib/ocaml/site-lib/findlib/findlib_top.cma
+file path=usr/lib/ocaml/site-lib/findlib/fl_metascanner.cmi
+file path=usr/lib/ocaml/site-lib/findlib/fl_metascanner.mli
+file path=usr/lib/ocaml/site-lib/findlib/fl_metatoken.cmi
+file path=usr/lib/ocaml/site-lib/findlib/fl_package_base.cmi
+file path=usr/lib/ocaml/site-lib/findlib/fl_package_base.mli
+file path=usr/lib/ocaml/site-lib/findlib/topfind.cmi
+file path=usr/lib/ocaml/site-lib/findlib/topfind.mli
+dir  path=usr/lib/ocaml/site-lib/graphics
+file path=usr/lib/ocaml/site-lib/graphics/META
+dir  path=usr/lib/ocaml/site-lib/num
+dir  path=usr/lib/ocaml/site-lib/num-top
+file path=usr/lib/ocaml/site-lib/num-top/META
+file path=usr/lib/ocaml/site-lib/num-top/num_top.cma
+file path=usr/lib/ocaml/site-lib/num-top/num_top.cmi
+file path=usr/lib/ocaml/site-lib/num-top/num_top_printers.cmi
+file path=usr/lib/ocaml/site-lib/num/META
+dir  path=usr/lib/ocaml/site-lib/ocamlbuild
+file path=usr/lib/ocaml/site-lib/ocamlbuild/META
+dir  path=usr/lib/ocaml/site-lib/stdlib
+file path=usr/lib/ocaml/site-lib/stdlib/META
+dir  path=usr/lib/ocaml/site-lib/str
+file path=usr/lib/ocaml/site-lib/str/META
+dir  path=usr/lib/ocaml/site-lib/threads
+file path=usr/lib/ocaml/site-lib/threads/META
+dir  path=usr/lib/ocaml/site-lib/unix
+file path=usr/lib/ocaml/site-lib/unix/META
+file path=usr/lib/ocaml/topfind
+dir  path=usr/share
+dir  path=usr/share/man
+dir  path=usr/share/man/man1
+file path=usr/share/man/man1/ocamlfind.1
+dir  path=usr/share/man/man3
+dir  path=usr/share/man/man5
+file path=usr/share/man/man5/META.5
+file path=usr/share/man/man5/findlib.conf.5
+file path=usr/share/man/man5/site-lib.5
